@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 sidebar">
+            <div class="sidebar-content">
+                <h6 class="sidebar-heading">API Endpoints</h6>
+                
+                <div class="nav-section">
+                    <h6 class="nav-section-title">Nodes</h6>
+                    <div class="nav-item" data-section="nodes-list">
+                        <span class="method-badge get">GET</span>
+                        <span class="endpoint">/api/nodes</span>
+                    </div>
+                    <div class="nav-item" data-section="nodes-create">
+                        <span class="method-badge post">POST</span>
+                        <span class="endpoint">/api/nodes</span>
+                    </div>
+                    <div class="nav-item" data-section="nodes-get">
+                        <span class="method-badge get">GET</span>
+                        <span class="endpoint">/api/nodes/{id}</span>
+                    </div>
+                    <div class="nav-item" data-section="nodes-update">
+                        <span class="method-badge put">PUT</span>
+                        <span class="endpoint">/api/nodes/{id}</span>
+                    </div>
+                    <div class="nav-item" data-section="nodes-delete">
+                        <span class="method-badge delete">DELETE</span>
+                        <span class="endpoint">/api/nodes/{id}</span>
+                    </div>
+                    <div class="nav-item" data-section="nodes-execute">
+                        <span class="method-badge post">POST</span>
+                        <span class="endpoint">/api/nodes/{id}/execute</span>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <h6 class="nav-section-title">Workflows</h6>
+                    <div class="nav-item" data-section="workflows-list">
+                        <span class="method-badge get">GET</span>
+                        <span class="endpoint">/api/workflows</span>
+                    </div>
+                    <div class="nav-item" data-section="workflows-create">
+                        <span class="method-badge post">POST</span>
+                        <span class="endpoint">/api/workflows</span>
+                    </div>
+                    <div class="nav-item" data-section="workflows-execute">
+                        <span class="method-badge post">POST</span>
+                        <span class="endpoint">/api/workflows/{id}/execute</span>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <h6 class="nav-section-title">Management</h6>
+                    <div class="nav-item" data-section="node-types">
+                        <span class="method-badge get">GET</span>
+                        <span class="endpoint">/api/node-types</span>
+                    </div>
+                    <div class="nav-item" data-section="executions">
+                        <span class="method-badge get">GET</span>
+                        <span class="endpoint">/api/executions/nodes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-md-9 col-lg-10 main-content-area">
+            <!-- Welcome Section -->
+            <div id="welcome-section" class="content-section active">
+                <div class="welcome-header">
+                    <h1 class="display-5 fw-bold text-primary">Workflow Node Manager</h1>
+                    <p class="lead text-muted">A Python Flask API system for managing and executing workflow nodes with n8n-inspired architecture</p>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i data-feather="box" class="text-primary"></i>
+                            </div>
+                            <h5>Node Management</h5>
+                            <p>Create, update, and manage workflow nodes with configurable parameters for different task types.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i data-feather="play" class="text-success"></i>
+                            </div>
+                            <h5>Workflow Execution</h5>
+                            <p>Execute individual nodes or complete workflows with sequential processing and error handling.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i data-feather="git-branch" class="text-info"></i>
+                            </div>
+                            <h5>Git Operations</h5>
+                            <p>Clone repositories, manage branches, and perform git operations as part of your workflows.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i data-feather="activity" class="text-warning"></i>
+                            </div>
+                            <h5>Execution Monitoring</h5>
+                            <p>Track execution history, monitor status, and view detailed logs for debugging and analysis.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-start mt-5">
+                    <h4>Quick Start</h4>
+                    <p>Try these common operations to get started:</p>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="quick-action" onclick="showSection('nodes-create')">
+                                <i data-feather="plus-circle" class="text-primary"></i>
+                                <span>Create a Node</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="quick-action" onclick="showSection('workflows-create')">
+                                <i data-feather="workflow" class="text-primary"></i>
+                                <span>Create a Workflow</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Documentation Sections -->
+            <div id="nodes-list" class="content-section">
+                <div class="endpoint-header">
+                    <span class="method-badge get">GET</span>
+                    <h2>/api/nodes</h2>
+                    <p>Retrieve a list of all workflow nodes</p>
+                </div>
+
+                <div class="endpoint-content">
+                    <h5>Response</h5>
+                    <pre class="code-block"><code>[
+  {
+    "id": 1,
+    "name": "Clone Repository",
+    "node_type": "git_clone",
+    "description": "Clone a Git repository",
+    "configuration": {
+      "url": "https://github.com/user/repo.git",
+      "branch": "main"
+    },
+    "created_at": "2024-01-01T12:00:00",
+    "updated_at": "2024-01-01T12:00:00"
+  }
+]</code></pre>
+
+                    <button class="btn btn-primary try-btn" onclick="tryRequest('GET', '/api/nodes')">
+                        <i data-feather="play"></i> Try it
+                    </button>
+                </div>
+            </div>
+
+            <div id="nodes-create" class="content-section">
+                <div class="endpoint-header">
+                    <span class="method-badge post">POST</span>
+                    <h2>/api/nodes</h2>
+                    <p>Create a new workflow node</p>
+                </div>
+
+                <div class="endpoint-content">
+                    <h5>Request Body</h5>
+                    <pre class="code-block"><code>{
+  "name": "Clone Repository",
+  "node_type": "git_clone",
+  "description": "Clone a Git repository",
+  "configuration": {
+    "url": "https://github.com/user/repo.git",
+    "branch": "main",
+    "target_dir": "./cloned_repo"
+  }
+}</code></pre>
+
+                    <div class="try-section">
+                        <h6>Try it out</h6>
+                        <textarea id="create-node-body" class="form-control code-input" rows="10">{
+  "name": "Test Git Clone",
+  "node_type": "git_clone",
+  "description": "Test git clone node",
+  "configuration": {
+    "url": "https://github.com/octocat/Hello-World.git",
+    "branch": "main",
+    "target_dir": "./test_repo"
+  }
+}</textarea>
+                        <button class="btn btn-primary mt-2" onclick="tryRequestWithBody('POST', '/api/nodes', 'create-node-body')">
+                            <i data-feather="play"></i> Create Node
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="nodes-execute" class="content-section">
+                <div class="endpoint-header">
+                    <span class="method-badge post">POST</span>
+                    <h2>/api/nodes/{id}/execute</h2>
+                    <p>Execute a workflow node with optional parameters</p>
+                </div>
+
+                <div class="endpoint-content">
+                    <h5>Request Body (Optional)</h5>
+                    <pre class="code-block"><code>{
+  "parameters": {
+    "url": "https://github.com/user/repo.git",
+    "branch": "develop"
+  }
+}</code></pre>
+
+                    <div class="try-section">
+                        <h6>Try it out</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Node ID</label>
+                            <input type="number" id="execute-node-id" class="form-control" placeholder="Enter node ID">
+                        </div>
+                        <textarea id="execute-node-body" class="form-control code-input" rows="6">{
+  "parameters": {}
+}</textarea>
+                        <button class="btn btn-success mt-2" onclick="executeNode()">
+                            <i data-feather="play"></i> Execute Node
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="workflows-create" class="content-section">
+                <div class="endpoint-header">
+                    <span class="method-badge post">POST</span>
+                    <h2>/api/workflows</h2>
+                    <p>Create a new workflow with multiple steps</p>
+                </div>
+
+                <div class="endpoint-content">
+                    <h5>Request Body</h5>
+                    <pre class="code-block"><code>{
+  "name": "Development Setup",
+  "description": "Setup development environment",
+  "steps": [
+    {
+      "node_id": 1,
+      "order": 1,
+      "parameters": {
+        "url": "https://github.com/user/repo.git"
+      }
+    },
+    {
+      "node_id": 2,
+      "order": 2,
+      "parameters": {
+        "packages": ["flask", "requests"]
+      }
+    }
+  ]
+}</code></pre>
+
+                    <div class="try-section">
+                        <h6>Try it out</h6>
+                        <textarea id="create-workflow-body" class="form-control code-input" rows="12">{
+  "name": "Test Workflow",
+  "description": "A test workflow",
+  "steps": []
+}</textarea>
+                        <button class="btn btn-primary mt-2" onclick="tryRequestWithBody('POST', '/api/workflows', 'create-workflow-body')">
+                            <i data-feather="play"></i> Create Workflow
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="node-types" class="content-section">
+                <div class="endpoint-header">
+                    <span class="method-badge get">GET</span>
+                    <h2>/api/node-types</h2>
+                    <p>Get available node types and their configuration schemas</p>
+                </div>
+
+                <div class="endpoint-content">
+                    <button class="btn btn-primary try-btn" onclick="loadNodeTypes()">
+                        <i data-feather="play"></i> Load Node Types
+                    </button>
+
+                    <div id="node-types-result" class="mt-3"></div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-section" class="mt-4" style="display: none;">
+                <h5>Response</h5>
+                <div id="response-status" class="mb-2"></div>
+                <pre id="response-body" class="code-block"></pre>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
