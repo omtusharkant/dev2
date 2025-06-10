@@ -1,5 +1,5 @@
-from flask import render_template, request, jsonify, abort
-from app import app, db
+from flask import render_template, request, jsonify, abort, Blueprint
+from database import db
 from models import Node, Workflow, WorkflowStep, NodeExecution, WorkflowExecution
 from node_executor import NodeExecutor
 from workflow_engine import WorkflowEngine
@@ -8,12 +8,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Create blueprint for routes
+bp = Blueprint('main', __name__)
+
 # Initialize executors
 node_executor = NodeExecutor()
 workflow_engine = WorkflowEngine()
 
 
-@app.route('/')
+@bp.route('/')
 def index():
     """Main documentation interface"""
     return render_template('index.html')
@@ -21,14 +24,14 @@ def index():
 
 # Node Management Routes
 
-@app.route('/api/nodes', methods=['GET'])
+@bp.route('/api/nodes', methods=['GET'])
 def get_nodes():
     """Get all nodes"""
     nodes = Node.query.all()
     return jsonify([node.to_dict() for node in nodes])
 
 
-@app.route('/api/nodes', methods=['POST'])
+@bp.route('/api/nodes', methods=['POST'])
 def create_node():
     """Create a new node"""
     data = request.get_json()
@@ -56,14 +59,14 @@ def create_node():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/api/nodes/<int:node_id>', methods=['GET'])
+@bp.route('/api/nodes/<int:node_id>', methods=['GET'])
 def get_node(node_id):
     """Get a specific node"""
     node = Node.query.get_or_404(node_id)
     return jsonify(node.to_dict())
 
 
-@app.route('/api/nodes/<int:node_id>', methods=['PUT'])
+@bp.route('/api/nodes/<int:node_id>', methods=['PUT'])
 def update_node(node_id):
     """Update a node"""
     node = Node.query.get_or_404(node_id)
@@ -93,7 +96,7 @@ def update_node(node_id):
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/api/nodes/<int:node_id>', methods=['DELETE'])
+@bp.route('/api/nodes/<int:node_id>', methods=['DELETE'])
 def delete_node(node_id):
     """Delete a node"""
     node = Node.query.get_or_404(node_id)
@@ -111,7 +114,7 @@ def delete_node(node_id):
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/api/nodes/<int:node_id>/execute', methods=['POST'])
+@bp.route('/api/nodes/<int:node_id>/execute', methods=['POST'])
 def execute_node(node_id):
     """Execute a specific node"""
     node = Node.query.get_or_404(node_id)
@@ -142,14 +145,14 @@ def execute_node(node_id):
 
 # Workflow Management Routes
 
-@app.route('/api/workflows', methods=['GET'])
+@bp.route('/api/workflows', methods=['GET'])
 def get_workflows():
     """Get all workflows"""
     workflows = Workflow.query.all()
     return jsonify([workflow.to_dict() for workflow in workflows])
 
 
-@app.route('/api/workflows', methods=['POST'])
+@bp.route('/api/workflows', methods=['POST'])
 def create_workflow():
     """Create a new workflow"""
     data = request.get_json()
@@ -191,14 +194,14 @@ def create_workflow():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/api/workflows/<int:workflow_id>', methods=['GET'])
+@bp.route('/api/workflows/<int:workflow_id>', methods=['GET'])
 def get_workflow(workflow_id):
     """Get a specific workflow"""
     workflow = Workflow.query.get_or_404(workflow_id)
     return jsonify(workflow.to_dict())
 
 
-@app.route('/api/workflows/<int:workflow_id>', methods=['PUT'])
+@bp.route('/api/workflows/<int:workflow_id>', methods=['PUT'])
 def update_workflow(workflow_id):
     """Update a workflow"""
     workflow = Workflow.query.get_or_404(workflow_id)
@@ -242,7 +245,7 @@ def update_workflow(workflow_id):
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/api/workflows/<int:workflow_id>', methods=['DELETE'])
+@bp.route('/api/workflows/<int:workflow_id>', methods=['DELETE'])
 def delete_workflow(workflow_id):
     """Delete a workflow"""
     workflow = Workflow.query.get_or_404(workflow_id)
@@ -260,7 +263,7 @@ def delete_workflow(workflow_id):
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/api/workflows/<int:workflow_id>/execute', methods=['POST'])
+@bp.route('/api/workflows/<int:workflow_id>/execute', methods=['POST'])
 def execute_workflow(workflow_id):
     """Execute a workflow"""
     workflow = Workflow.query.get_or_404(workflow_id)
@@ -293,7 +296,7 @@ def execute_workflow(workflow_id):
 
 # Execution History Routes
 
-@app.route('/api/executions/nodes', methods=['GET'])
+@bp.route('/api/executions/nodes', methods=['GET'])
 def get_node_executions():
     """Get node execution history"""
     page = request.args.get('page', 1, type=int)
@@ -311,7 +314,7 @@ def get_node_executions():
     })
 
 
-@app.route('/api/executions/workflows', methods=['GET'])
+@bp.route('/api/executions/workflows', methods=['GET'])
 def get_workflow_executions():
     """Get workflow execution history"""
     page = request.args.get('page', 1, type=int)
@@ -329,7 +332,7 @@ def get_workflow_executions():
     })
 
 
-@app.route('/api/executions/workflows/<int:execution_id>', methods=['GET'])
+@bp.route('/api/executions/workflows/<int:execution_id>', methods=['GET'])
 def get_workflow_execution(execution_id):
     """Get specific workflow execution details"""
     execution = WorkflowExecution.query.get_or_404(execution_id)
@@ -338,7 +341,7 @@ def get_workflow_execution(execution_id):
 
 # Node Type Information
 
-@app.route('/api/node-types', methods=['GET'])
+@bp.route('/api/node-types', methods=['GET'])
 def get_node_types():
     """Get available node types and their configuration schemas"""
     node_types = {
@@ -393,12 +396,12 @@ def get_node_types():
 
 # Error handlers
 
-@app.errorhandler(404)
+@bp.errorhandler(404)
 def not_found(error):
     return jsonify({'error': 'Resource not found'}), 404
 
 
-@app.errorhandler(500)
+@bp.errorhandler(500)
 def internal_error(error):
     db.session.rollback()
     return jsonify({'error': 'Internal server error'}), 500

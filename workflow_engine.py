@@ -1,7 +1,8 @@
 import logging
 import json
 from datetime import datetime
-from models import WorkflowExecution, db
+from models import WorkflowExecution
+from database import db
 from node_executor import NodeExecutor
 
 logger = logging.getLogger(__name__)

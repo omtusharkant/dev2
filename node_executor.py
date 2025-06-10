@@ -3,7 +3,8 @@ import os
 import logging
 import json
 from datetime import datetime
-from models import NodeExecution, db
+from models import NodeExecution
+from database import db
 
 logger = logging.getLogger(__name__)
 
